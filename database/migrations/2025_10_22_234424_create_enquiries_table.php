@@ -6,33 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('enquiries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId(column: 'contact_')->nullable();
-            $table->string(column:'name');
-            $table->string(column:'email');
-            $table->string(column:'phone')->nullable();
-            $table->string(column:'message');
-            $table->string(column:'user_agent')->nullable();
-            $table->string(column:'ip_address')->nullable();
-
-
-
-
-
+            $table->foreignId('property_id')->nullable()->constrained('properties')->onDelete('set null');
+            $table->string('name');
+            $table->string('email');
+            $table->string('phone')->nullable();
+            $table->text('message');
+            $table->string('user_agent')->nullable();
+            $table->ipAddress('ip_address')->nullable();
             $table->timestamps();
-
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('enquiries');

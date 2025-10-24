@@ -6,78 +6,69 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
-            // basic information
-            $table->string(column: 'title');
-            $table->text(column: 'description');
-            $table->enum(column: 'type', allowed: ['apartment', 'house', 'conda', 'land', 'townhouse', 'villa', 'commercial']);
-            $table->enum(column: 'listing_type', allowed: ['sale', 'rent'])->default(value:'sale');
-            $table->enum(column: 'status', allowed: ['available', 'sold', 'pending', 'draft', 'rented'])->default(value:'available');
-            
+
+            // Basic information
+            $table->string('title');
+            $table->text('description');
+            $table->enum('type', ['apartment', 'house', 'condo', 'land', 'townhouse', 'villa', 'commercial']);
+            $table->enum('listing_type', ['sale', 'rent'])->default('sale');
+            $table->enum('status', ['available', 'sold', 'pending', 'draft', 'rented'])->default('available');
+
             // Pricing
-            $table->decimal(column: 'price', total:12, places:2);
-            $table->decimal(column:'price_per_sqft', total: 8, places:2)->nullable();
+            $table->decimal('price', 12, 2);
+            $table->decimal('price_per_sqft', 8, 2)->nullable();
 
             // Location
-            $table->string(column: 'address');
-            $table->string(column: 'city');
-            $table->string(column: 'state');
-            $table->string(column: 'country')->default(value:'Tanzania');
-            $table->string(column: 'postal_code')->nullable();
-            $table->decimal(column: 'latitude', total: 10, places:8)->nullable();
-            $table->decimal(column: 'longitude', total: 10, places:8)->nullable();
+            $table->string('address');
+            $table->string('city');
+            $table->string('state');
+            $table->string('country')->default('Tanzania');
+            $table->string('postal_code')->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 10, 8)->nullable();
 
             // Property details
-            $table->integer(column: 'bedroom')->nullable();
-            $table->integer(column: 'bathrooms')->nullable();
-            $table->integer(column: 'total_area')->nullable();
-            $table->integer(column: 'built_year')->nullable();
-            $table->boolean(column: 'furnished')->nullable();
-            $table->boolean(column: 'parking')->nullable();
-            $table->integer(column: 'parking_spaces')->nullable();
+            $table->integer('bedrooms')->nullable();
+            $table->integer('bathrooms')->nullable();
+            $table->integer('total_area')->nullable();
+            $table->integer('built_year')->nullable();
+            $table->boolean('furnished')->nullable();
+            $table->boolean('parking')->nullable();
+            $table->integer('parking_spaces')->nullable();
 
-            // Features (JSON for flexibility)
-            $table->json(column:'features')->nullable();
-            $table->json(column:'images')->nullable();
+            // Features (JSON)
+            $table->json('features')->nullable();
+            $table->json('images')->nullable();
 
             // SEO
-            $table->string(column: 'slug')->unique();
-            $table->string(column: 'meta_title')->nullable();
-            $table->text(column: 'meta_description')->nullable();
-            $table->string(column: '')->nullable();
-
-            $table->string(column: '')->nullable();
+            $table->string('slug')->unique();
+            $table->string('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
 
             // Visibility
-            $table->boolean(column: 'is_featured')->default(value:false);
-            $table->boolean(column: 'is_active')->default(value:true);
-            $table->timestamp(column: 'featured_until')->nullable(value:false);
+            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_active')->default(true);
+            $table->timestamp('featured_until')->nullable();
 
-            // Contact Information
-            $table->string(column: 'contact_')->nullable();
-            $table->string(column: 'contact_phone')->nullable();
-            $table->string(column: 'contact_email')->nullable();
+            // Contact info
+            $table->string('contact_name')->nullable();
+            $table->string('contact_phone')->nullable();
+            $table->string('contact_email')->nullable();
 
             // Indexes
-            $table->string(column: ['type', 'listing_type', 'status']);
-            $table->string(column: ['city', 'state']);
-            $table->string(column: ['price', 'listing_type']);
-            $table->string(column: 'is_featured');
-        
+            $table->index(['type', 'listing_type', 'status']);
+            $table->index(['city', 'state']);
+            $table->index(['price', 'listing_type']);
+            $table->index(['is_featured']);
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('properties');
