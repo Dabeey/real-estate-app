@@ -122,7 +122,7 @@ class PropertyForm
                     ]),
 
 
-                    // 3. Section for property details
+                    // 4. Section for property details
                     Section::make('Details')
                     ->columnSpanFull()
                     ->description('Additional details about the property.')
@@ -166,46 +166,50 @@ class PropertyForm
                     ]),
 
                     
-                    //  4. Section for media and SEO details
-
-
+                    //  5. Section for media and SEO details
+                    Section::make('Media & SEO')
+                    ->columnSpanFull()
+                    ->description('Upload images and set SEO details.')
+                    ->schema([ 
+                        FileUpload::make('images')
+                            ->multiple()
+                            ->image()
+                            ->maxFiles(count: 10)
+                            ->disk(name: 'public')
+                            ->directory(directory:'properties-images')
+                            ->columnSpanFull(),
                     
+                        Grid::make(2)
+                            ->columnSpanFull()
+                            ->schema([
+                                TextInput::make('meta_title'),
+                                Textarea::make('meta_description')
+                                    ->columnSpanFull(),
                 
-       
+                                Toggle::make('is_featured')
+                                    ->live()
+                                    ->required(),
+                                Toggle::make('is_active')
+                                ->default('active')
+                                    ->required(),
+                                DateTimePicker::make('featured_until')
+                                    ->visible(condition:fn(Get $get): bool => $get('is_featured')),
+                    
+                        ]),
+                ]),
 
-           
 
-                
-         
-
-                FileUpload::make('images')
-                ->multiple()
-                ->image()
-                ->maxFiles(count: 10)
-                ->disk(name: 'public')
-                ->directory(directory:'properties-images')
-                ->columnSpanFull(),
-
-                TextInput::make('slug')
-                ->readOnly(),
-
-                TextInput::make('meta_title'),
-                Textarea::make('meta_description')
-                    ->columnSpanFull(),
-
-                Toggle::make('is_featured')
-                    ->live()
-                    ->required(),
-                Toggle::make('is_active')
-                    ->required(),
-                DateTimePicker::make('featured_until')
-                    ->visible(condition:fn(Get $get): bool => $get('is_featured')),
-    
-                    TextInput::make('contact_name'),
-                TextInput::make('contact_phone')
-                    ->tel(),
-                TextInput::make('contact_email')
-                    ->email(),
-            ]);
+                // 6. Section for contact
+                Section::make('')
+                    ->columnSpanFull()
+                    ->description('')
+                    ->schema([
+                        TextInput::make('contact_name'),
+                        TextInput::make('contact_phone')
+                            ->tel(),
+                        TextInput::make('contact_email')
+                            ->email(),  
+                        ]),
+                    ]);
     }
 }
