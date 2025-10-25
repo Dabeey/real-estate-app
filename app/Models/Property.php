@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use illuminate\Database\Eloquent\Builder;
 use illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Support\Facades\Storage;
 
 use function PHPUnit\Framework\callback;
 
@@ -136,7 +137,7 @@ class Property extends Model
     public function withBedrooms(Builder $query, int $count): Builder
     {
         return $query->where(column: 'bedroom', operator: '>=', value: $count);
-    };
+    }
 
     // Accessor methods
     public function getFormattedPriceAttribute(): string
@@ -164,7 +165,7 @@ class Property extends Model
         // Build a full URL to the main image 
         $mainImage = $this->main_image;
         return $mainImage ? storage::url($mainImage): null;
-    };
+    }
 
     public function getStatusColorAttribute(): string
     {
@@ -212,10 +213,14 @@ class Property extends Model
         if (! $this->total_area || $this->total_area <= 0) {
             return null;
         }
-
-        $this->round($this->price / $this->total_area, 2);
+    
+        $pricePerSqft = round($this->price / $this->total_area, 2);
+        $this->price_per_sqft = $pricePerSqft;
         $this->save();
+    
+        return $pricePerSqft;
     }
+    
 
     public function addFeature(string $feature): void
     {
