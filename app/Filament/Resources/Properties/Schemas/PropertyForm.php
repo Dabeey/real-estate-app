@@ -174,6 +174,7 @@ class PropertyForm
                         FileUpload::make('images')
                             ->multiple()
                             ->image()
+                            ->panelLayout('grid')
                             ->maxFiles(count: 10)
                             ->disk(name: 'public')
                             ->directory(directory:'properties-images')

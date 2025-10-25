@@ -6,6 +6,8 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -22,7 +24,7 @@ class PropertiesTable
                 TextColumn::make('listing_type'),
                 TextColumn::make('status'),
                 TextColumn::make('price')
-                    ->money()
+                    ->money(currency:'NGN')
                     ->sortable(),
                 TextColumn::make('price_per_sqft')
                     ->numeric()
@@ -65,6 +67,15 @@ class PropertiesTable
                 TextColumn::make('parking_spaces')
                     ->numeric()
                     ->sortable(),
+
+                TextEntry::make('features')
+                    ->placeholder('-')
+                    ->badge()
+                    ->columnSpanFull(),
+
+                ImageEntry::make('images')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
 
                 // Hidden by default
                 TextColumn::make('slug')
