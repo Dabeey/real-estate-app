@@ -31,27 +31,30 @@ class PropertiesTable
                     ->searchable(),
                 TextColumn::make('city')
                     ->searchable(),
+
+                // Hidden by default
                 TextColumn::make('state')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('country')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('postal_code')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('latitude')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('longitude')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('bedrooms')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('bathrooms')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('total_area')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('built_year')
                     ->numeric()
                     ->sortable(),
@@ -62,10 +65,15 @@ class PropertiesTable
                 TextColumn::make('parking_spaces')
                     ->numeric()
                     ->sortable(),
+
+                // Hidden by default
                 TextColumn::make('slug')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('meta_title')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 IconColumn::make('is_featured')
                     ->boolean(),
                 IconColumn::make('is_active')

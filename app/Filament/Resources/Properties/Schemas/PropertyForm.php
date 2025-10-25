@@ -3,10 +3,13 @@
 namespace App\Filament\Resources\Properties\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class PropertyForm
@@ -22,14 +25,14 @@ class PropertyForm
                     ->columnSpanFull(),
                 Select::make('type')
                     ->options([
-            'apartment' => 'Apartment',
-            'house' => 'House',
-            'condo' => 'Condo',
-            'land' => 'Land',
-            'townhouse' => 'Townhouse',
-            'villa' => 'Villa',
-            'commercial' => 'Commercial',
-        ])
+                    'apartment' => 'Apartment',
+                    'house' => 'House',
+                    'condo' => 'Condo',
+                    'land' => 'Land',
+                    'townhouse' => 'Townhouse',
+                    'villa' => 'Villa',
+                    'commercial' => 'Commercial',
+                ])
                     ->required(),
                 Select::make('listing_type')
                     ->options(['sale' => 'Sale', 'rent' => 'Rent'])
@@ -37,21 +40,21 @@ class PropertyForm
                     ->required(),
                 Select::make('status')
                     ->options([
-            'available' => 'Available',
-            'sold' => 'Sold',
-            'pending' => 'Pending',
-            'draft' => 'Draft',
-            'rented' => 'Rented',
-        ])
+                    'available' => 'Available',
+                    'sold' => 'Sold',
+                    'pending' => 'Pending',
+                    'draft' => 'Draft',
+                    'rented' => 'Rented',
+                ])
                     ->default('available')
                     ->required(),
                 TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('#'),
                 TextInput::make('price_per_sqft')
                     ->numeric(),
-                TextInput::make('address')
+                Textarea::make('address')
                     ->required(),
                 TextInput::make('city')
                     ->required(),
@@ -59,7 +62,7 @@ class PropertyForm
                     ->required(),
                 TextInput::make('country')
                     ->required()
-                    ->default('Tanzania'),
+                    ->default('Nigeria'),
                 TextInput::make('postal_code'),
                 TextInput::make('latitude')
                     ->numeric(),
@@ -70,26 +73,49 @@ class PropertyForm
                 TextInput::make('bathrooms')
                     ->numeric(),
                 TextInput::make('total_area')
-                    ->numeric(),
+                    ->numeric()
+                    ->prefix('sqft'),
+
                 TextInput::make('built_year')
                     ->numeric(),
-                Toggle::make('furnished'),
-                Toggle::make('parking'),
+                Toggle::make('furnished')
+                ->required(),
+
+                Toggle::make('parking')
+                ->live()
+                ->required(),
+
                 TextInput::make('parking_spaces')
-                    ->numeric(),
-                TextInput::make('features'),
-                TextInput::make('images'),
+                    ->numeric()
+                    ->visible(condition:fn(Get $get): bool => $get('parking')),
+                
+                TagsInput::make('features')
+                ->helperText('Add features like garden, pool, gym, etc')
+                ->columnSpanFull(),
+
+                FileUpload::make('images')
+                ->multiple()
+                ->image()
+                ->maxFiles(count: 10)
+                ->disk(name: 'public')
+                ->directory(directory:'properties-images')
+                ->columnSpanFull(),
+
                 TextInput::make('slug')
-                    ->required(),
+                ->readOnly(),
                 TextInput::make('meta_title'),
                 Textarea::make('meta_description')
                     ->columnSpanFull(),
+
                 Toggle::make('is_featured')
+                    ->live()
                     ->required(),
                 Toggle::make('is_active')
                     ->required(),
-                DateTimePicker::make('featured_until'),
-                TextInput::make('contact_name'),
+                DateTimePicker::make('featured_until')
+                    ->visible(condition:fn(Get $get): bool => $get('is_featured')),
+    
+                    TextInput::make('contact_name'),
                 TextInput::make('contact_phone')
                     ->tel(),
                 TextInput::make('contact_email')
