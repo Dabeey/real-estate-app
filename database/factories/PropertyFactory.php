@@ -87,9 +87,10 @@ class PropertyFactory extends Factory
         $adjectives = ['Beautiful', 'Spacious', 'Modern', 'Luxurious', 'Prime', 'Excellent','Executive', 'Premium', 'Elegant'];        
         $typeName = $this->faker->randomElement($typeNames[$type]);
         $locations = ['in Prime Location', 'in GRA', 'in City Center', 'in Peaceful Neighborhood'];
+        $location = $this->faker->randomElement($locations); 
         $adjective = $this->faker->randomElement($adjectives);
         
-        return "$adjective $typeName for $listingType $locations in $city";
+        return "$adjective $typeName for $listingType $location in $city";
     
     }
 

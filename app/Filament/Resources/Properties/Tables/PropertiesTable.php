@@ -6,9 +6,8 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -68,12 +67,12 @@ class PropertiesTable
                     ->numeric()
                     ->sortable(),
 
-                TextEntry::make('features')
+                TextColumn::make('features')
                     ->placeholder('-')
                     ->badge()
                     ->columnSpanFull(),
 
-                ImageEntry::make('images')
+                ImageColumn::make('images')
                     ->placeholder('-')
                     ->columnSpanFull(),
 
