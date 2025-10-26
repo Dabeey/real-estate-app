@@ -13,6 +13,11 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        hmr: {
+            host: 'real-estate-app.test',
+        },
+        host: '0.0.0.0', // Allow external connections
+   
         cors: true,
     },
 });

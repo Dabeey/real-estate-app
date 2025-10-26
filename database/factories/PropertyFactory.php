@@ -53,7 +53,7 @@ class PropertyFactory extends Factory
             'parking_spaces' => $this->faker->numberBetween(0, 4),
             'bedrooms' => $this->getBedrooms($type),
             'bathrooms' => $this->getBathrooms($type),
-            'area' => $this->getArea($type),
+            'total_area' => $this->getArea($type),
             'features' => $this->getFeatures($type),
             'images' => $this->getImages($type),
             'slug' => Str::slug($this->generateTitle($type, $listingType, $city)) . '-' . $this->faker->unique()->numberBetween(1000, 9999),
@@ -127,7 +127,7 @@ class PropertyFactory extends Factory
 
     private function getArea($type): array
     {
-        $area = match ($type) {
+        $total_area = match ($type) {
             'land' => $this->faker->numberBetween(500, 5000),
             'commercial' => $this->faker->numberBetween(100, 2000),
             'apartment' => $this->faker->numberBetween(50, 200),
@@ -139,9 +139,9 @@ class PropertyFactory extends Factory
         };
 
         return [
-            'value' => $area,
+            'value' => $total_area,
             'unit' => 'sqm',
-            'sqft' => round($area * 10.764, 2) // Convert to square feet
+            'sqft' => round($total_area * 10.764, 2) // Convert to square feet
         ];
     }
 
@@ -161,7 +161,7 @@ class PropertyFactory extends Factory
             default => ['Security', 'Parking'],
         };
 
-        $selectedFeatures = array_merge($baseFeatures, $this->faker->randomElements($typeFeatures, $this->faker->numberBetween(2, 5)));
+        $selectedFeatures = array_merge($baseFeatures, $this->faker->randomElements($typeFeatures, $this->faker->numberBetween(2, 4)));
         
         return array_unique($selectedFeatures);
     }
