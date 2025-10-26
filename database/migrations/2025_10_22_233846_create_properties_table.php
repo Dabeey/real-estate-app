@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('city');
             $table->string('state');
-            $table->string('country')->default('Tanzania');
+            $table->string('country')->default('Nigeria');
             $table->string('postal_code')->nullable();
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 10, 8)->nullable();

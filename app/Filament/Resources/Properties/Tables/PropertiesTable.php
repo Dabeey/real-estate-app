@@ -22,10 +22,13 @@ class PropertiesTable
                 TextColumn::make('type'),
                 TextColumn::make('listing_type'),
                 TextColumn::make('status'),
+
                 TextColumn::make('price')
+                    ->formatStateUsing(fn ($state) => '₦' . number_format($state, 2))
                     ->money(currency:'NGN')
                     ->sortable(),
                 TextColumn::make('price_per_sqft')
+                    ->formatStateUsing(fn ($state) => '₦' . number_format($state, 2))
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('address')
@@ -68,13 +71,49 @@ class PropertiesTable
                     ->sortable(),
 
                 TextColumn::make('features')
-                    ->placeholder('-')
+                    ->formatStateUsing(function ($state) {
+                        if (empty($state) || $state === 'null' || $state === '[]') {
+                            return '-';
+                        }
+                        
+                        $features = json_decode($state, true);
+
+                          // If json_decode failed or returned null
+                        if (!is_array($features) || json_last_error() !== JSON_ERROR_NONE) {
+                            return '-';
+                        }
+                        
+                        // If array is empty
+                        if (empty($features)) {
+                            return '-';
+                        }
+                        
+                        return implode(', ', $features);
+                    })
                     ->badge()
-                    ->columnSpanFull(),
+                    ->colors(['primary'])
+                    ->limit(50), // Show first 3 features
 
                 ImageColumn::make('images')
-                    ->placeholder('-')
-                    ->columnSpanFull(),
+                    ->getStateUsing(function ($record) {
+                        $images = $record->images ?? [];
+                        return !empty($images) ? $images[0] : null;
+                    })
+                    ->circular()
+                    ->imageSize(50)
+                    ->defaultImageUrl('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&h=50&q=80')
+                    ->extraImgAttributes(['class' => 'object-cover']),
+
+                // ImageColumn::make('images')
+                //     ->getStateUsing(function ($record) {
+                //         return $record->images ?? [];
+                //     })
+                //     ->stacked()
+                //     ->limit(3)
+                //     ->circular()
+                //     ->size(30)
+                //     ->overlap(0.5),
+            
 
                 // Hidden by default
                 TextColumn::make('slug')

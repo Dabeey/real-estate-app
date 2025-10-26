@@ -17,9 +17,9 @@ class PropertyInfolist
                 TextEntry::make('listing_type'),
                 TextEntry::make('status'),
                 TextEntry::make('price')
-                    ->money(),
+                    ->money(currency: 'NGN', locale: 'en_NG'),
                 TextEntry::make('price_per_sqft')
-                    ->numeric(),
+                    ->money(currency: 'NGN', locale: 'en_NG'),
                 TextEntry::make('address'),
                 TextEntry::make('city'),
                 TextEntry::make('state'),

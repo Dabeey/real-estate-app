@@ -78,7 +78,7 @@ class PropertyForm
                             TextInput::make('price')
                                 ->required()
                                 ->numeric()
-                                ->prefix('#'),
+                                ->prefix('₦'),
                             TextInput::make('price_per_sqft')
                                 ->numeric()
                                 ->prefix('NGN')

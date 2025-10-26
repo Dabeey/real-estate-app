@@ -36,7 +36,7 @@ class PropertyFactory extends Factory
         return [
             'type' => $type,
             'listing_type' => $listingType,
-            'status' => $this->faker->randomElement(['available', 'sold', 'rented', 'under_contract', 'draft']),
+            'status' => $this->faker->randomElement(['available', 'sold', 'rented', 'pending', 'draft']),
             'city' => $city,
             'state' => $this->faker->randomElement(['Lagos State', 'Federal Capital Territory', 'Rivers State', 'Oyo State', 'Enugu State', 'Anambra State']),
             'country' => 'Nigeria',
@@ -45,8 +45,7 @@ class PropertyFactory extends Factory
             'latitude' => $this->faker->latitude(6.4, 6.6), // Nigeria latitude range
             'longitude' => $this->faker->longitude(3.3, 3.5), // Nigeria longitude range
             'price' => round($price, 2),
-            'price_per_sqft' => round($price / $this->getArea($type)['value'], 2),
-            'total_area' => $this->getArea($type),
+            'price_per_sqft' => $this->getArea($type) > 0 ? round($price / $this->getArea($type), 2) : 0,
             'built_year' => $this->faker->numberBetween(1980, 2023),
             'furnished' => $this->faker->boolean(40), // 40% chance of being furnished
             'parking' => $this->faker->boolean(70), // 70% chance of having parking
@@ -54,8 +53,8 @@ class PropertyFactory extends Factory
             'bedrooms' => $this->getBedrooms($type),
             'bathrooms' => $this->getBathrooms($type),
             'total_area' => $this->getArea($type),
-            'features' => $this->getFeatures($type),
-            'images' => $this->getImages($type),
+            'features' => json_encode($this->getFeatures($type), JSON_UNESCAPED_SLASHES),
+            'images' => json_encode($this->getImages($type)),
             'slug' => Str::slug($this->generateTitle($type, $listingType, $city)) . '-' . $this->faker->unique()->numberBetween(1000, 9999),
             'meta_title' => $this->faker->sentence(6),
             'meta_description' => $this->faker->paragraph(1),
@@ -125,7 +124,7 @@ class PropertyFactory extends Factory
     }
 
 
-    private function getArea($type): array
+    private function getArea($type): int
     {
         $total_area = match ($type) {
             'land' => $this->faker->numberBetween(500, 5000),
@@ -138,12 +137,9 @@ class PropertyFactory extends Factory
             default => $this->faker->numberBetween(50, 200),
         };
 
-        return [
-            'value' => $total_area,
-            'unit' => 'sqm',
-            'sqft' => round($total_area * 10.764, 2) // Convert to square feet
-        ];
+        return $total_area;
     }
+
 
 
     private function getFeatures($type): array
@@ -188,7 +184,7 @@ class PropertyFactory extends Factory
         for ($i = 1; $i <= $numImages; $i++) {
             $images[] = "https://picsum.photos/800/600?random={$this->faker->numberBetween(1000, 9999)}";
             // Alternative: "images/properties/{$imageBase}_{$i}.jpg"
-        };
+        }
         
         return $images;
     }
@@ -201,11 +197,6 @@ class PropertyFactory extends Factory
             return [
                 'status' => 'sold',
                 'listing_type' => 'sale',
-                'sold_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
-                'sold_price' => $this->faker->numberBetween(
-                    (int)($attributes['price'] * 0.9), // 90% of asking price
-                    (int)($attributes['price'] * 1.1)  // 110% of asking price
-                ),
                 'is_active' => false,
                 'is_featured' => false,
             ];
@@ -223,13 +214,6 @@ class PropertyFactory extends Factory
             return [
                 'status' => 'rented',
                 'listing_type' => 'rent',
-                'rented_at' => $rentedDate,
-                'lease_start' => $rentedDate,
-                'lease_end' => Carbon::instance($rentedDate)->addYear(),
-                'security_deposit' => $this->faker->numberBetween(
-                    (int)($attributes['price'] * 1), // 1 month rent
-                    (int)($attributes['price'] * 2)  // 2 months rent
-                ),
                 'is_active' => false,
                 'is_featured' => false,
             ];
@@ -245,11 +229,6 @@ class PropertyFactory extends Factory
             return [
                 'status' => 'available',
                 'is_active' => true,
-                'sold_at' => null,
-                'sold_price' => null,
-                'rented_at' => null,
-                'lease_start' => null,
-                'lease_end' => null,
             ];
         });
     }
@@ -257,11 +236,11 @@ class PropertyFactory extends Factory
     /**
      * Configure the factory for UNDER CONTRACT properties
      */
-    public function underContract(): Factory
+    public function pending(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status' => 'under_contract',
+                'status' => 'pending',
                 'contract_start' => $this->faker->dateTimeBetween('-1 month', 'now'),
                 'contract_end' => $this->faker->dateTimeBetween('now', '+2 months'),
                 'is_active' => false,

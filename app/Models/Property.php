@@ -142,7 +142,7 @@ class Property extends Model
     // Accessor methods
     public function getFormattedPriceAttribute(): string
     {
-        return number_format($this->price, 2) . ' USD';
+        return number_format($this->price, 2) . ' NGN';
     }
 
     public function getFullAddressAttribute(): string
