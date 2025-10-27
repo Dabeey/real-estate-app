@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Livewire\PropertyListing;
-
+use App\Livewire\PropertyShow;
+use App\Models\Property;
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,7 +14,12 @@ Route::get('/', function () {
 
 Route::get('properties', PropertyListing::class)->name('properties.index');
 
+// Show
+Route::get('properties/{property:slug}', App\Livewire\PropertyShow::class)
+    ->name('properties.show');
 
+
+    
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');

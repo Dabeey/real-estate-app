@@ -153,7 +153,7 @@ class Property extends Model
     public function getMainImageAttribute(): ?string
     {
         // If images is a JSON column, decode and return the first image
-        $images = json_decode($this->images ?? '[]', true);
+        $images = $this->images ?? '[]';
         return $images[0] ?? null;
 
         // $images=$this->images;
@@ -197,11 +197,9 @@ class Property extends Model
 
     public function isFeatured(): bool
     {
-        if (!$this->is_featured){
-            return false;
-        }
-        return !$this->is_featured || $this->is_featured->isFuture();
+        return $this->is_featured === true;
     }
+
 
     public function isAvailable(): bool
     {

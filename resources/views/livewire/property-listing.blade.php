@@ -40,7 +40,7 @@
                         class="w-full text-gray-900 dark:text-gray-200 dark:bg-gray-700 p-2 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         
                         <option value="">All Types</option>
-                        @foreach($propertyType as $key => $label)
+                        @foreach($propertyTypes as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </select>                
@@ -152,7 +152,7 @@
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center space-x-4">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    {{ $properties->total() }} Properties Found
+                    {{ $this->properties->total() }} Properties Found
                 </h2>
                 @if($search || $type || $listingType || $city || $minPrice || $maxPrice || $minBedrooms || $featuredOnly)
                     <span class="text-sm text-gray-500 dark:text-gray-400">with filters applied</span>
@@ -183,9 +183,9 @@
     
 
         {{-- Properties Grid/List --}}
-        @if($properties->count() > 0)
+        @if($this->properties->count() > 0)
             <div class="{{ $viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6' }}">
-                @foreach($properties as $property)
+                @foreach($this->properties as $property)
                     @if($viewMode === 'grid')
 
                         {{-- Grid View --}}
@@ -238,7 +238,7 @@
                                     </div>
                                 @endif
                                 
-                                <a href="{{ route('property.show', $property->slug) }}" 
+                                <a href="{{ route('properties.show', $property->slug) }}" 
                                     {{-- Hover Effect and smooth transition colors --}}
                                     class="block w-full bg-blue-600 text-white text-center py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
                                     View Details
@@ -300,7 +300,7 @@
                                             @endif
                                         </div>
                                         
-                                        <a href="{{ route('property.show', $property->slug) }}" 
+                                        <a href="{{ route('properties.show', $property->slug) }}" 
                                             class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
                                             View Details
                                         </a>
@@ -315,9 +315,9 @@
 
             {{-- Pagination --}}
             <div class="mt-8">
-                {{-- $properties->links() = Laravel's built-in pagination.  --}}
+                {{-- $this->properties->links() = Laravel's built-in pagination.  --}}
                 {{-- Automatically generates: « Previous 1 2 3 ... 10 Next » --}}
-                {{ $properties->links() }}
+                {{ $this->properties->links() }}
             </div>
 
 
