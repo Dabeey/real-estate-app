@@ -40,7 +40,7 @@
                         class="w-full text-gray-900 dark:text-gray-200 dark:bg-gray-700 p-2 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         
                         <option value="">All Types</option>
-                        @foreach($propertyTypes as $key => $label)
+                        @foreach($propertyType as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </select>                
@@ -144,13 +144,194 @@
                         </button>
                     </div>
                 </div>
-
-
             </div>
         </div>
 
-    
-    
-    </div>
 
+        {{-- Results Header --}}
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                    {{ $properties->total() }} Properties Found
+                </h2>
+                @if($search || $type || $listingType || $city || $minPrice || $maxPrice || $minBedrooms || $featuredOnly)
+                    <span class="text-sm text-gray-500 dark:text-gray-400">with filters applied</span>
+                @endif
+            </div>
+
+
+            {{-- Sort Options --}}
+            <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-700 dark:text-gray-300">Sort by:</span>
+                <select wire:model.live="sortBy" 
+                    class="text-sm rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-300">
+                    <option value="created_at">Newest</option>
+                    <option value="price">Price</option>
+                    <option value="title">Name</option>
+                    <option value="city">City</option>
+                </select>
+
+                <button wire:click="sortBy('{{ $sortBy }}')" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    @if($sortDirection === 'asc')
+                        ↑
+                    @else
+                        ↓
+                    @endif
+                </button>
+            </div>
+        </div>
+    
+
+        {{-- Properties Grid/List --}}
+        @if($properties->count() > 0)
+            <div class="{{ $viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6' }}">
+                @foreach($properties as $property)
+                    @if($viewMode === 'grid')
+
+                        {{-- Grid View --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg dark:hover:shadow-neutral-700 transition-shadow duration-300">
+                            <div class="relative">
+                                @if($property->main_image)
+                                    <img src="{{ $property->image_url }}" alt="{{ $property->title }}" class="w-full h-48 object-cover">
+                                @else
+                                    <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                        <span class="text-4xl">{{ $property->type_icon }}</span>
+                                    </div>
+                                @endif
+                                
+                                @if($property->isFeatured())
+                                    <div class="absolute top-2 left-2">
+                                        <span class="bg-yellow-500 text-white px-2 py-1 text-xs font-semibold rounded">FEATURED</span>
+                                    </div>
+                                @endif
+                                
+                                <div class="absolute top-2 right-2">
+                                    <span class="bg-{{ $property->listing_type === 'sale' ? 'green' : 'blue' }}-500 text-white px-2 py-1 text-xs font-semibold rounded uppercase">
+                                        {{ $property->listing_type }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4">
+                                {{-- line-clamp-2 = Limits to 2 lines, shows "..." if longer --}}
+                                <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">{{ $property->title }}</h3>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">🔥 {{ $property->full_address }}</p>
+                                
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xl font-bold text-green-600">{{ $property->formatted_price }}</span>
+                                    @if($property->price_per_sqft)
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">NGN {{ number_format($property->price_per_sqft, 0) }}/sqft</span>
+                                    @endif
+                                </div>
+                                
+                                @if($property->bedrooms || $property->bathrooms || $property->total_area)
+                                    <div class="flex items-center space-x-3 text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                        @if($property->bedrooms)
+                                            <span>🛏️ {{ $property->bedrooms }}</span>
+                                        @endif
+                                        @if($property->bathrooms)
+                                            <span>🚿 {{ $property->bathrooms }}</span>
+                                        @endif
+                                        @if($property->total_area)
+                                            <span>📐 {{ number_format($property->total_area) }} sqft</span>
+                                        @endif
+                                    </div>
+                                @endif
+                                
+                                <a href="{{ route('property.show', $property->slug) }}" 
+                                    {{-- Hover Effect and smooth transition colors --}}
+                                    class="block w-full bg-blue-600 text-white text-center py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+
+                    @else
+
+                        {{-- List View --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg dark:hover:shadow-neutral-700 transition-shadow duration-300">
+                            <div class="md:flex">
+                                <div class="md:w-1/3 relative">
+                                    @if($property->main_image)
+                                        <img src="{{ $property->image_url }}" alt="{{ $property->title }}" class="w-full h-48 md:h-full object-cover">
+                                    @else
+                                        <div class="w-full h-48 md:h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                            <span class="text-4xl">{{ $property->type_icon }}</span>
+                                        </div>
+                                    @endif
+                                    
+                                    @if($property->isFeatured())
+                                        <div class="absolute top-2 left-2">
+                                            <span class="bg-yellow-500 text-white px-2 py-1 text-xs font-semibold rounded">FEATURED</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                
+                                <div class="md:w-2/3 p-6">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <h3 class="font-semibold text-xl text-gray-900 dark:text-gray-100 mb-1">{{ $property->title }}</h3>
+                                        <span class="bg-{{ $property->listing_type === 'sale' ? 'green' : 'blue' }}-500 text-white px-2 py-1 text-xs font-semibold rounded uppercase ml-2">
+                                            {{ $property->listing_type }}
+                                        </span>
+                                    </div>
+                                    
+                                    <p class="text-gray-600 dark:text-gray-400 mb-2">🔥 {{ $property->full_address }}</p>
+                                    <p class="text-gray-700 dark:text-gray-300 text-sm mb-3 line-clamp-2">{{ $property->description }}</p>
+                                    
+                                    @if($property->bedrooms || $property->bathrooms || $property->total_area)
+                                        <div class="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                            @if($property->bedrooms)
+                                                <span>🛏️ {{ $property->bedrooms }} bedrooms</span>
+                                            @endif
+                                            @if($property->bathrooms)
+                                                <span>🚿 {{ $property->bathrooms }} bathrooms</span>
+                                            @endif
+                                            @if($property->total_area)
+                                                <span>📐 {{ number_format($property->total_area) }} sqft</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-2xl font-bold text-green-600">{{ $property->formatted_price }}</span>
+                                            @if($property->price_per_sqft)
+                                                <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">NGN {{ number_format($property->price_per_sqft, 0) }}/sqft</span>
+                                            @endif
+                                        </div>
+                                        
+                                        <a href="{{ route('property.show', $property->slug) }}" 
+                                            class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+
+
+            {{-- Pagination --}}
+            <div class="mt-8">
+                {{-- $properties->links() = Laravel's built-in pagination.  --}}
+                {{-- Automatically generates: « Previous 1 2 3 ... 10 Next » --}}
+                {{ $properties->links() }}
+            </div>
+
+
+        {{-- If there are no properties --}}
+        @else
+            {{-- No Results --}}
+            <div class="text-center py-12">
+                <div class="text-6xl mb-4">🏠</div>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">No properties found</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Try adjusting your search criteria or clearing some filters.</p>
+                <button wire:click="clearFilters" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
+                    Clear All Filters
+                </button>
+            </div>
+        @endif
+    </div>
 </div>
