@@ -1,4 +1,5 @@
-<div>
-    {{-- Knowing others is intelligence; knowing yourself is true wisdom. --}}
-    
-</div>
+{{-- Add app layouts --}}
+<x-layouts.app>
+
+
+</x-layouts.app>

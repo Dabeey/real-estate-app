@@ -137,7 +137,7 @@ class PropertyListing extends Component
             ->when($this->minPrice, fn($q) => $q->where('price', '>=', $this->minPrice))
             ->when($this->maxPrice, fn($q) => $q->where('price', '<=', $this->maxPrice))
             ->when($this->minBedrooms, fn($q) => $q->where('bedrooms', '>=', $this->minBedrooms))
-            ->when($this->featuredOnly, fn($q) => $q->where('featured', true))
+            ->when($this->featuredOnly, fn($q) => $q->where('is_featured', true))
             ->available()
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate(6);
