@@ -164,7 +164,7 @@ class Property extends Model
     {
         // Build a full URL to the main image 
         $mainImage = $this->main_image;
-        return $mainImage ? storage::url($mainImage): null;
+        return $mainImage ? Storage::url($mainImage): null;
     }
 
     public function getStatusColorAttribute(): string
