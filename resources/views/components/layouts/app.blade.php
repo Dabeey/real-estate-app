@@ -8,10 +8,35 @@
 
     <title>{{ $title ?? 'Page Title' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- Add alpine.js CDN for dropdown--}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 
 <body>
+
+    {{-- Navigation Links --}}
+    <div class="hidden md:flex items-center space-x-8">
+        <a href="{{ route('properties.index') }}"
+            class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('properties.index') ? 'text-blue-600' : '' }}">
+            All Properties
+        </a>
+        <a href="{{ route('properties.index', ['listingType' => 'sale']) }}"
+            class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">
+            For Sale
+        </a>
+        <a href="{{ route('properties.index', ['listingType' => 'rent']) }}"
+            class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">
+            For Rent
+        </a>
+        <a href="{{ route('properties.index', ['featuredOnly' => true]) }}"
+            class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">
+            Featured
+        </a>
+    </div>
+
+
     {{-- Navigation --}}
     <nav class="bg-white dark:bg-neutral-900 shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,7 +49,7 @@
                     </a>
                 </div>
 
-                {{-- Navigation Links --}}
+                {{-- Desktop Navigation Links --}}
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="{{ route('properties.index') }}"
                         class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('properties.index') ? 'text-blue-600 ' : '' }}">
@@ -43,6 +68,57 @@
                         Featured
                     </a>
                 </div>
+
+                            
+                {{-- ADD USER DROPDOWN --}}
+                @auth
+                <div class="hidden md:flex items-center space-x-8">
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" 
+                                class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                {{ substr(auth()->user()->name, 0, 1) }}
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+
+                        <div x-show="open" 
+                            @click.away="open = false"
+                            class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 z-50"
+                            style="display: none;">
+                            
+                            <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ auth()->user()->name }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ auth()->user()->email }}</p>
+                            </div>
+
+                            <div class="py-1">
+                                <a href="{{ route('profile.edit') }}" 
+                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    ⚙️ Settings
+                                </a>
+                                
+                                <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                    @csrf
+                                    <button type="submit" 
+                                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        🚪 Log Out
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @else
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="{{ route('login') }}" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-300">Login</a>
+                    <a href="{{ route('register') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Register</a>
+                </div>
+                @endauth
+
 
                 {{-- Mobile menu button --}}
                 <div class="md:hidden"> 
@@ -82,6 +158,48 @@
                     class="text-gray-600 hover:text-gray-900 dark:hover:text-gray-300 block px-3 py-2 rounded-md text-base font-medium">
                     Featured
                 </a>
+
+                
+                {{-- ADD MOBILE AUTH LINKS --}}
+                @auth
+                <div class="border-t border-gray-200 pt-2 mt-2" x-data="{ open: false }">
+                    <button @click="open = !open" 
+                            class="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 dark:hover:text-gray-300">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                                {{ substr(auth()->user()->name, 0, 1) }}
+                            </div>
+                            <span>Account</span>
+                        </div>
+                        <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+        
+                    <div x-show="open" 
+                         x-transition
+                         class="mt-2 space-y-1 pl-4">
+                        <a href="{{ route('profile.edit') }}" 
+                           class="block px-3 py-2 rounded-md text-sm text-gray-600 hover:text-gray-900 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                            ⚙️ Settings
+                        </a>
+                        
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" 
+                                    class="block w-full text-left px-3 py-2 rounded-md text-sm text-gray-600 hover:text-gray-900 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                                🚪 Log Out
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @else
+                <div class="border-t border-gray-200 pt-2 mt-2 space-y-1">
+                    <a href="{{ route('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 dark:hover:text-gray-300">Login</a>
+                    <a href="{{ route('register') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 dark:hover:text-gray-300">Register</a>
+                </div>
+                @endauth
+                
             </div>
         </div>
     </nav>
