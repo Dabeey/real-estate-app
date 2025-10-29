@@ -7,6 +7,8 @@ use App\Livewire\PropertyListing;
 use App\Livewire\PropertyShow;
 use App\Models\Property;
 
+
+
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
@@ -15,8 +17,7 @@ Route::get('/', function () {
 Route::get('properties', PropertyListing::class)->name('properties.index');
 
 // Show
-Route::get('properties/{property:slug}', App\Livewire\PropertyShow::class)
-    ->name('properties.show');
+Route::get('properties/{property:slug}', PropertyShow::class)->name('properties.show');
 
 
     

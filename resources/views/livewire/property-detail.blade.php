@@ -1,4 +1,3 @@
-{{-- NO layout wrapper - just component content --}}
 <div>
     <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
         <div class="border-b border-gray-200 dark:border-gray-700">

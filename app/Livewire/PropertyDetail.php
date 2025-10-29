@@ -5,7 +5,7 @@ namespace App\Livewire;
 use App\Models\Property;
 use Livewire\Component;
 
-class PropertyShow extends Component
+class PropertyDetail extends Component
 {
     public Property $property;
 
@@ -16,6 +16,6 @@ class PropertyShow extends Component
 
     public function render()
     {
-        return view('livewire.property-show');
+        return view('livewire.property-detail');
     }
 }
