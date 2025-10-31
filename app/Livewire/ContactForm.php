@@ -18,6 +18,7 @@ class ContactForm extends Component
     public $message = '';
     public $showSuccess = false;
 
+    
     protected $rules = [
         'name' => 'required|min:2|max:255',
         'email' => 'required|email|max:255',

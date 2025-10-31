@@ -16,7 +16,7 @@ class PropertyInquiry extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(public $enquiry)
     {
         //
     }
@@ -38,6 +38,9 @@ class PropertyInquiry extends Mailable
     {
         return new Content(
             markdown: 'emails.enquiry-email',
+            with:[
+                'enquiry' => $this->enquiry,
+            ]
         );
     }
 
