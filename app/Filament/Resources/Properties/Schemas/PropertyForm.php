@@ -175,6 +175,7 @@ class PropertyForm
                             ->multiple()
                             ->image()
                             ->panelLayout('grid')
+                            ->maxSize(10240)
                             ->maxFiles(count: 10)
                             ->disk(name: 'public')
                             ->directory(directory:'properties-images')
