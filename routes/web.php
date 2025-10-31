@@ -6,12 +6,11 @@ use Livewire\Volt\Volt;
 use App\Livewire\PropertyListing;
 use App\Livewire\PropertyShow;
 use App\Models\Property;
+use Illuminate\Http\RedirectResponse;
 
-
-
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', function (): RedirectResponse{
+    return redirect()->route('properties.index')
+});
 
 
 Route::get('properties', PropertyListing::class)->name('properties.index');
