@@ -9,7 +9,7 @@ use App\Models\Property;
 use Illuminate\Http\RedirectResponse;
 
 Route::get('/', function (): RedirectResponse{
-    return redirect()->route('properties.index')
+    return redirect()->route('properties.index');
 });
 
 

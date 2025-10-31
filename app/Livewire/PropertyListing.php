@@ -7,7 +7,10 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Title;
 
+// Title of page
+#[Title('Property Listings')]
 
 class PropertyListing extends Component
 {
