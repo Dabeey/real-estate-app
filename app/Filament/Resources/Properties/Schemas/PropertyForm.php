@@ -176,11 +176,15 @@ class PropertyForm
                             ->image()
                             ->panelLayout('grid')
                             ->maxSize(30720)
-                            ->maxFiles(count: 10)
+                            ->maxFiles(10)
                             ->disk('public')
-                            ->directory(directory:'properties-images')
-                            ->columnSpanFull(),
-                    
+                            ->directory('properties-images')
+                            ->visibility('public')
+                            ->preserveFilenames()
+                            ->storeFileNamesIn('original_filenames')
+                            ->columnSpanFull()
+                            ->required(),
+                            
                         Grid::make(2)
                             ->columnSpanFull()
                             ->schema([

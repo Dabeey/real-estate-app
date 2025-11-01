@@ -23,7 +23,7 @@ class Property extends Model
         'listing_type',
         'status',
         'price',
-        'price_per_sqrt',
+        'price_per_sqft',
         'address',
         'city',
         'state',
@@ -41,7 +41,7 @@ class Property extends Model
         'features',
         'images',
         'slug',
-        'meta title',
+        'meta_title',
         'meta_description',
         'is_featured',
         'is_active',
@@ -60,10 +60,38 @@ class Property extends Model
         'is_active' => 'boolean',
         'featured_until' => 'datetime',
         'price' => 'decimal:2',
-        'price_per_sqrt' => 'decimal:2',
+        'price_per_sqft' => 'decimal:2',
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
     ];
+
+
+    public function getImagesAttribute($value)
+    {
+        // If it's already an array, return it
+        if (is_array($value)) {
+            return $value;
+        }
+        
+        // If it's a string, try to decode it
+        if (is_string($value)) {
+            // Remove extra quotes if they exist
+            $cleanedValue = trim($value, '"');
+            
+            $decoded = json_decode($cleanedValue, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $decoded;
+            }
+            
+            // If still fails, try to decode the original
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $decoded;
+            }
+        }
+
+        return [];
+    }
 
     protected static function boot(): void
     {
@@ -150,22 +178,70 @@ class Property extends Model
         return "{$this->address}, {$this->city}, {$this->state}, {$this->country}";
     }
 
+
+
     public function getMainImageAttribute(): ?string
     {
-        // If images is a JSON column, decode and return the first image
-        $images = $this->images ?? '[]';
-        return $images[0] ?? null;
-
-        // $images=$this->images;
-        // return $images && count(value: $images) > 0? $images[0] : null;
+        $images = $this->images ?? [];
+        
+        // Handle both external URLs and local storage paths
+        $mainImage = $images[0] ?? null;
+        
+        if (!$mainImage) {
+            return null;
+        }
+        
+        // If it's already a full URL (from seeding), return as is
+        if (filter_var($mainImage, FILTER_VALIDATE_URL)) {
+            return $mainImage;
+        }
+        
+        // If it's a local path, convert to storage URL
+        return Storage::url($mainImage);
     }
 
     public function getImageUrlAttribute(): ?string
     {
-        // Build a full URL to the main image 
-        $mainImage = $this->main_image;
-        return $mainImage ? Storage::url($mainImage): null;
+        return $this->main_image;
     }
+
+    // Get all image URLs (for galleries)
+    public function getImageUrlsAttribute(): array
+    {
+        $images = $this->images ?? [];
+        $urls = [];
+        
+        foreach ($images as $image) {
+            if (filter_var($image, FILTER_VALIDATE_URL)) {
+                // External URL
+                $urls[] = $image;
+            } else {
+                // Local file - convert to URL
+                $urls[] = Storage::url($image);
+            }
+        }
+        
+        return $urls;
+    }
+
+    // Debug method to check images
+    public function debugImages()
+    {
+        echo "Images raw: " . $this->getRawOriginal('images') . "\n";
+        echo "Images casted: ";
+        print_r($this->images);
+        echo "\n";
+        
+        $files = Storage::files('properties-images');
+        echo "Files in storage: ";
+        print_r($files);
+    }
+
+
+
+
+
+
 
     public function getStatusColorAttribute(): string
     {
