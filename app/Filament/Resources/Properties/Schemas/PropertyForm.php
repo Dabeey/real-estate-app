@@ -175,9 +175,9 @@ class PropertyForm
                             ->multiple()
                             ->image()
                             ->panelLayout('grid')
-                            ->maxSize(10240)
+                            ->maxSize(30720)
                             ->maxFiles(count: 10)
-                            ->disk(name: 'public')
+                            ->disk('public')
                             ->directory(directory:'properties-images')
                             ->columnSpanFull(),
                     
