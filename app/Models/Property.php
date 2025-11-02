@@ -5,15 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use illuminate\Database\Eloquent\Builder;
-use illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Support\Facades\Storage;
-
-use function PHPUnit\Framework\callback;
 
 class Property extends Model
 {
-    /** @use HasFactory<\Database\Factories\PropertyFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -53,7 +50,7 @@ class Property extends Model
 
     protected $casts = [
         'features' => 'array',
-        'images' => 'array',
+        'images' => 'array',  // Let Laravel handle the array casting automatically
         'furnished' => 'boolean',
         'parking' => 'boolean',
         'is_featured' => 'boolean',
@@ -65,106 +62,81 @@ class Property extends Model
         'longitude' => 'decimal:8',
     ];
 
-
-    public function getImagesAttribute($value)
-    {
-        // If it's already an array, return it
-        if (is_array($value)) {
-            return $value;
-        }
-        
-        // If it's a string, try to decode it
-        if (is_string($value)) {
-            // Remove extra quotes if they exist
-            $cleanedValue = trim($value, '"');
-            
-            $decoded = json_decode($cleanedValue, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return $decoded;
-            }
-            
-            // If still fails, try to decode the original
-            $decoded = json_decode($value, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return $decoded;
-            }
-        }
-
-        return [];
-    }
+    // REMOVED the getImagesAttribute accessor - it was causing conflicts!
+    // Laravel's array casting will handle JSON decoding automatically
 
     protected static function boot(): void
     {
         parent::boot();
 
-        static::creating(callback: function ($property): void {
+        static::creating(function ($property): void {
             if (empty($property->slug)) {
-            $property->slug = Str::slug($property->title);
+                $property->slug = Str::slug($property->title);
             }
         });
 
-        static::updating(callback: function ($property): void {
-            // Update slug if title changes
+        static::updating(function ($property): void {
             if ($property->isDirty('title')) {
                 $property->slug = Str::slug($property->title);
             }
         });
     }
 
-    // Route model binding by slug
     public function getRouteKeyName(): string
     {
         return 'slug';
     }
 
-    // Scopes for filtering
+    // Scopes
     #[Scope]
-    public function available(Builder $query):Builder {
-        return $query->where(column: 'status', operator: 'available')
-        -> where(column: 'is_active', operator: true);
+    public function available(Builder $query): Builder
+    {
+        return $query->where('status', 'available')
+            ->where('is_active', true);
     }
 
     #[Scope]
-    public function forSale(Builder $query): Builder {
-        return $query->where(column: 'listing_type', operator:'sale');
+    public function forSale(Builder $query): Builder
+    {
+        return $query->where('listing_type', 'sale');
     }
 
     #[Scope]
     public function forRent(Builder $query): Builder
     {
-        return $query->where(column: 'listing_type', operator: 'rent');
+        return $query->where('listing_type', 'rent');
     }
 
     #[Scope]
     public function featured(Builder $query): Builder
     {
-        return $query->where(column: 'is_featured', operator: true)
-        ->where(column:'is_active', operator:true)
-        ->where(column:'featured_until', operator: '>=', value:now());
+        return $query->where('is_featured', true)
+            ->where('is_active', true)
+            ->where('featured_until', '>=', now());
     }
 
     #[Scope]
     public function inCity(Builder $query, string $city): Builder
     {
-        return $query->where(column: 'city', operator: 'like', value: '%{$city}%');
+        return $query->where('city', 'like', "%{$city}%");
     }
 
     #[Scope]
     public function priceBetween(Builder $query, float $min, float $max): Builder
     {
-        return $query->whereBetween(column: 'price', values: [$min, $max]);
+        return $query->whereBetween('price', [$min, $max]);
     }
 
     #[Scope]
     public function byType(Builder $query, string $type): Builder
     {
-        return $query->where(column: 'type', operator: $type);
+        return $query->where('type', $type);
     }
 
     #[Scope]
     public function withBedrooms(Builder $query, int $count): Builder
     {
-        return $query->where(column: 'bedroom', operator: '>=', value: $count);
+        return $query->where('bedrooms', '>=', $count);
     }
 
     // Accessor methods
@@ -178,26 +150,29 @@ class Property extends Model
         return "{$this->address}, {$this->city}, {$this->state}, {$this->country}";
     }
 
-
-
+    // FIXED: Main image accessor
     public function getMainImageAttribute(): ?string
     {
-        $images = $this->images ?? [];
+        $images = $this->images;
         
-        // Handle both external URLs and local storage paths
-        $mainImage = $images[0] ?? null;
-        
-        if (!$mainImage) {
+        // Check if images array exists and has items
+        if (!is_array($images) || empty($images)) {
             return null;
         }
+        
+        $mainImage = $images[0];
         
         // If it's already a full URL (from seeding), return as is
         if (filter_var($mainImage, FILTER_VALIDATE_URL)) {
             return $mainImage;
         }
         
-        // If it's a local path, convert to storage URL
-        return Storage::url($mainImage);
+        // For local storage paths, check if file exists before returning URL
+        if (Storage::disk('public')->exists($mainImage)) {
+            return Storage::disk('public')->url($mainImage);
+        }
+        
+        return null;
     }
 
     public function getImageUrlAttribute(): ?string
@@ -205,43 +180,29 @@ class Property extends Model
         return $this->main_image;
     }
 
-    // Get all image URLs (for galleries)
+    // FIXED: Get all image URLs
     public function getImageUrlsAttribute(): array
     {
-        $images = $this->images ?? [];
+        $images = $this->images;
+        
+        if (!is_array($images) || empty($images)) {
+            return [];
+        }
+        
         $urls = [];
         
         foreach ($images as $image) {
             if (filter_var($image, FILTER_VALIDATE_URL)) {
-                // External URL
+                // External URL from seeding
                 $urls[] = $image;
-            } else {
-                // Local file - convert to URL
-                $urls[] = Storage::url($image);
+            } elseif (Storage::disk('public')->exists($image)) {
+                // Local file - convert to URL only if it exists
+                $urls[] = Storage::disk('public')->url($image);
             }
         }
         
         return $urls;
     }
-
-    // Debug method to check images
-    public function debugImages()
-    {
-        echo "Images raw: " . $this->getRawOriginal('images') . "\n";
-        echo "Images casted: ";
-        print_r($this->images);
-        echo "\n";
-        
-        $files = Storage::files('properties-images');
-        echo "Files in storage: ";
-        print_r($files);
-    }
-
-
-
-
-
-
 
     public function getStatusColorAttribute(): string
     {
@@ -269,13 +230,10 @@ class Property extends Model
         };
     }
 
-    // Helper methods
-
     public function isFeatured(): bool
     {
         return $this->is_featured === true;
     }
-
 
     public function isAvailable(): bool
     {
@@ -284,7 +242,7 @@ class Property extends Model
 
     public function calculatePricePerSqft(): ?float
     {
-        if (! $this->total_area || $this->total_area <= 0) {
+        if (!$this->total_area || $this->total_area <= 0) {
             return null;
         }
     
@@ -294,13 +252,12 @@ class Property extends Model
     
         return $pricePerSqft;
     }
-    
 
     public function addFeature(string $feature): void
     {
         $features = $this->features ?? [];
 
-        if (! in_array($feature, $features, true)) {
+        if (!in_array($feature, $features, true)) {
             $features[] = $feature;
             $this->features = $features;
             $this->save();
@@ -309,7 +266,7 @@ class Property extends Model
 
     public function removeFeature(string $feature): void
     {
-        if (! $this->features) {
+        if (!$this->features) {
             return;
         }
 
@@ -323,7 +280,6 @@ class Property extends Model
         return in_array($feature, $this->features ?? [], true);
     }
 
-    // Static Method
     public static function getPropertyTypes(): array
     {
         return [
@@ -355,8 +311,4 @@ class Property extends Model
             'rented' => 'Rented',
         ];
     }
-
-
-    
-
 }

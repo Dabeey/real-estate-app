@@ -1,8 +1,8 @@
 {{-- Background for light and dark theme --}}
-<div class="min-h-sreen bg-gray-50 dark:bg-neutral-900">
+<div class="min-h-screen bg-gray-50 dark:bg-neutral-900">
     
     {{-- Header Section --}}
-    <div class="bg-white dark:bg-gray-800 shadow sm">
+    <div class="bg-white dark:bg-gray-800 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center">
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Find Your Dream Property</h1>
@@ -11,48 +11,36 @@
         </div>
     </div>
 
-
     {{-- Main Content --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {{-- Filters Section --}}
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-
                 {{-- Search --}}
                 <div>
-                    {{-- Adjusted label text for better contrast in light mode --}}
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" >Search</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
                     <input type="text" wire:model.live.debounce.500ms="search" placeholder="Search properties"
-                    
-                    {{--  NB: debounce.500ms = Wait 500ms after typing stops before updating --}}
-                    {{-- Added text ccolor for both modes and dark border color --}}
-                    class="w-full text-gray-900 dark:text-gray-200 dark:bg-gray-700 p-2 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        class="w-full text-gray-900 dark:text-gray-200 dark:bg-gray-700 p-2 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 </div>
-
 
                 {{-- Property Type --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Property Type</label>
-                    
                     <select wire:model.live="type" 
-                    {{-- "focus:border-blue-500 focus:ring-blue-500" -> Cool feature! When user clicks the dropdown, it gets a blue border and glow --}}
                         class="w-full text-gray-900 dark:text-gray-200 dark:bg-gray-700 p-2 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        
                         <option value="">All Types</option>
                         @foreach($propertyTypes as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
+                            <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </select>                
                 </div>
 
-                
                 {{-- Listing Type --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Listing Type</label>
                     <select wire:model.live="listingType" 
                         class="w-full text-gray-900 dark:text-gray-200 dark:bg-gray-700 p-2 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        
                         <option value="">For Sale & Rent</option>
                         @foreach($listingTypes as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
@@ -60,7 +48,6 @@
                     </select>
                 </div>
 
-                
                 {{-- City --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City</label>
@@ -74,11 +61,8 @@
                 </div>
             </div>
 
-
             {{-- Advanced Filters --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
-                {{-- Price Range --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Price (NGN)</label>
                     <input type="number" wire:model.live.debounce.500ms="minPrice" placeholder="Min price"
@@ -91,13 +75,10 @@
                         class="w-full text-gray-900 dark:text-gray-200 dark:bg-gray-700 p-2 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 </div>
 
-
-                {{-- Min Bedrooms --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Bedrooms</label>
                     <select wire:model.live="minBedrooms" 
                         class="w-full text-gray-900 dark:text-gray-200 dark:bg-gray-700 p-2 rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        
                         <option value="">Any</option>
                         @for($i = 1; $i <= 6; $i++)
                             <option value="{{ $i }}">{{ $i }}+ bedroom{{ $i > 1 ? 's' : '' }}</option>
@@ -105,17 +86,13 @@
                     </select>
                 </div>
 
-
-                {{-- Featured Toggle --}}
                 <div class="flex items-end">
                     <label class="flex items-center">
-                        {{-- Added dark border to checkbox --}}
                         <input type="checkbox" wire:model.live="featuredOnly" class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Featured only</span>
                     </label>
                 </div>
             </div>
-
 
             {{-- Actions --}}
             <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -124,10 +101,7 @@
                 </button>
                 
                 <div class="flex items-center space-x-4">
-
-                    {{-- View Mode Toggle --}}
                     <div class="flex items-center space-x-2">
-                        {{-- Grid mode --}}
                         <button wire:click="setViewMode('grid')" 
                             class="p-2 rounded-md {{ $viewMode === 'grid' ? 'bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-200' : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300' }}">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -135,7 +109,6 @@
                             </svg>
                         </button>
 
-                        {{-- List mode --}}
                         <button wire:click="setViewMode('list')"
                             class="p-2 rounded-md {{ $viewMode === 'list' ? 'bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-200' : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300' }}">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -147,7 +120,6 @@
             </div>
         </div>
 
-
         {{-- Results Header --}}
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center space-x-4">
@@ -158,7 +130,6 @@
                     <span class="text-sm text-gray-500 dark:text-gray-400">with filters applied</span>
                 @endif
             </div>
-
 
             {{-- Sort Options --}}
             <div class="flex items-center space-x-2">
@@ -180,22 +151,25 @@
                 </button>
             </div>
         </div>
-    
 
         {{-- Properties Grid/List --}}
         @if($this->properties->count() > 0)
             <div class="{{ $viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6' }}">
                 @foreach($this->properties as $property)
                     @if($viewMode === 'grid')
-
-                        {{-- Grid View --}}
+                        {{-- Grid View - FIXED IMAGE HANDLING --}}
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg dark:hover:shadow-neutral-700 transition-shadow duration-300">
                             <div class="relative">
                                 @if($property->main_image)
-                                    <img src="{{ $property->image_url }}" alt="{{ $property->title }}" class="w-full h-48 object-cover">
+                                    <img 
+                                        src="{{ $property->main_image }}" 
+                                        alt="{{ $property->title }}" 
+                                        class="w-full h-48 object-cover"
+                                        onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22600%22%3E%3Crect width=%22800%22 height=%22600%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22monospace%22 font-size=%2236%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';"
+                                        loading="lazy">
                                 @else
                                     <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                        <span class="text-4xl">{{ $property->type_icon }}</span>
+                                        <span class="text-4xl">🏠</span>
                                     </div>
                                 @endif
                                 
@@ -213,9 +187,8 @@
                             </div>
                             
                             <div class="p-4">
-                                {{-- line-clamp-2 = Limits to 2 lines, shows "..." if longer --}}
                                 <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">{{ $property->title }}</h3>
-                                <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">🔥 {{ $property->full_address }}</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">📍 {{ $property->full_address }}</p>
                                 
                                 <div class="flex items-center justify-between mb-3">
                                     <span class="text-xl font-bold text-green-600">{{ $property->formatted_price }}</span>
@@ -239,24 +212,26 @@
                                 @endif
                                 
                                 <a href="{{ route('properties.show', $property->slug) }}" 
-                                    {{-- Hover Effect and smooth transition colors --}}
                                     class="block w-full bg-blue-600 text-white text-center py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
                                     View Details
                                 </a>
                             </div>
                         </div>
-
                     @else
-
-                        {{-- List View --}}
+                        {{-- List View - FIXED IMAGE HANDLING --}}
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg dark:hover:shadow-neutral-700 transition-shadow duration-300">
                             <div class="md:flex">
                                 <div class="md:w-1/3 relative">
                                     @if($property->main_image)
-                                        <img src="{{ $property->image_url }}" alt="{{ $property->title }}" class="w-full h-48 md:h-full object-cover">
+                                        <img 
+                                            src="{{ $property->main_image }}" 
+                                            alt="{{ $property->title }}" 
+                                            class="w-full h-48 md:h-full object-cover"
+                                            onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22600%22%3E%3Crect width=%22800%22 height=%22600%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22monospace%22 font-size=%2236%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';"
+                                            loading="lazy">
                                     @else
                                         <div class="w-full h-48 md:h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                            <span class="text-4xl">{{ $property->type_icon }}</span>
+                                            <span class="text-4xl">🏠</span>
                                         </div>
                                     @endif
                                     
@@ -275,7 +250,7 @@
                                         </span>
                                     </div>
                                     
-                                    <p class="text-gray-600 dark:text-gray-400 mb-2">🔥 {{ $property->full_address }}</p>
+                                    <p class="text-gray-600 dark:text-gray-400 mb-2">📍 {{ $property->full_address }}</p>
                                     <p class="text-gray-700 dark:text-gray-300 text-sm mb-3 line-clamp-2">{{ $property->description }}</p>
                                     
                                     @if($property->bedrooms || $property->bathrooms || $property->total_area)
@@ -312,16 +287,10 @@
                 @endforeach
             </div>
 
-
             {{-- Pagination --}}
             <div class="mt-8">
-                {{-- $this->properties->links() = Laravel's built-in pagination.  --}}
-                {{-- Automatically generates: « Previous 1 2 3 ... 10 Next » --}}
                 {{ $this->properties->links() }}
             </div>
-
-
-        {{-- If there are no properties --}}
         @else
             {{-- No Results --}}
             <div class="text-center py-12">
