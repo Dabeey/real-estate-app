@@ -121,7 +121,7 @@
         </div>
 
         {{-- Results Header --}}
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
             <div class="flex items-center space-x-4">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
                     {{ $this->properties->total() }} Properties Found
@@ -131,24 +131,39 @@
                 @endif
             </div>
 
-            {{-- Sort Options --}}
-            <div class="flex items-center space-x-2">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Sort by:</span>
-                <select wire:model.live="sortBy" 
-                    class="text-sm rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-300">
-                    <option value="created_at">Newest</option>
-                    <option value="price">Price</option>
-                    <option value="title">Name</option>
-                    <option value="city">City</option>
-                </select>
+            {{-- Sort and Per Page Options --}}
+            <div class="flex items-center space-x-4">
+                {{-- Per Page Selector --}}
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Show:</span>
+                    <select wire:model.live="perPage" 
+                        class="text-sm rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-300">
+                        <option value="6">6</option>
+                        <option value="12">12</option>
+                        <option value="24">24</option>
+                        <option value="48">48</option>
+                    </select>
+                </div>
 
-                <button wire:click="sortBy('{{ $sortBy }}')" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                    @if($sortDirection === 'asc')
-                        ↑
-                    @else
-                        ↓
-                    @endif
-                </button>
+                {{-- Sort Options --}}
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Sort by:</span>
+                    <select wire:model.live="sortBy" 
+                        class="text-sm rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-300">
+                        <option value="created_at">Newest</option>
+                        <option value="price">Price</option>
+                        <option value="title">Name</option>
+                        <option value="city">City</option>
+                    </select>
+
+                    <button wire:click="sortBy('{{ $sortBy }}')" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        @if($sortDirection === 'asc')
+                            ↑
+                        @else
+                            ↓
+                        @endif
+                    </button>
+                </div>
             </div>
         </div>
 

@@ -9,9 +9,7 @@ use Livewire\WithPagination;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Title;
 
-// Title of page
 #[Title('Property Listings')]
-
 class PropertyListing extends Component
 {
     use WithPagination;
@@ -22,15 +20,16 @@ class PropertyListing extends Component
     public $maxPrice = '';
     public $type = '';
     public $listingType = '';
-    public $city = ''; // ← ADDED THIS
-    public $minBedrooms = ''; // ← FIXED SPELLING
+    public $city = '';
+    public $minBedrooms = '';
     public $featuredOnly = false;
     public $sortBy = 'created_at';
     public $sortDirection = 'desc';
     public $viewMode = 'grid';
+    public $perPage = 12; // ← ADDED: User can control items per page
 
-    // Add these arrays for your dropdowns
-    public $propertyTypes = [ // ← ADDED THIS
+    // Property types for dropdown
+    public $propertyTypes = [
         'house' => 'House',
         'apartment' => 'Apartment',
         'condo' => 'Condo',
@@ -39,11 +38,11 @@ class PropertyListing extends Component
         'land' => 'Land',
     ];
 
-    public $cities = [ // ← ADDED THIS
+    public $cities = [
         'Lagos', 'Abuja', 'Port Harcourt', 'Kano', 'Ibadan'
     ];
 
-    public $listingTypes = [ // ← ADDED THIS
+    public $listingTypes = [
         'sale' => 'For Sale',
         'rent' => 'For Rent'
     ];
@@ -56,48 +55,64 @@ class PropertyListing extends Component
         'city' => ['except' => ''],
         'minPrice' => ['except' => ''],
         'maxPrice' => ['except' => ''],
-        'minBedrooms' => ['except' => ''], // ← FIXED: minBedrooms (not minBedroom)
+        'minBedrooms' => ['except' => ''],
         'featuredOnly' => ['except' => false],
         'sortBy' => ['except' => 'created_at'],
         'sortDirection' => ['except' => 'desc'],
+        'perPage' => ['except' => 12], // ← ADDED
         'page' => ['except' => 1],
     ];
 
     // Reset page when filters change
-    public function updatingSearch(): void{ // ← FIXED: updatingSearch (not updatingImgSearch)
+    public function updatingSearch(): void
+    {
         $this->resetPage();
     }
 
-    public function updatingType(): void{
+    public function updatingType(): void
+    {
         $this->resetPage();
     }
 
-    public function updatingListingType(): void{
+    public function updatingListingType(): void
+    {
         $this->resetPage();
     }
     
-    public function updatingCity(): void{
+    public function updatingCity(): void
+    {
         $this->resetPage();
     }
 
-    public function updatingMinPrice(): void{
+    public function updatingMinPrice(): void
+    {
         $this->resetPage();
     }
 
-    public function updatingMaxPrice(): void{
+    public function updatingMaxPrice(): void
+    {
         $this->resetPage();
     }
 
-    public function updatingMinBedrooms(): void{ // ← ADDED THIS
+    public function updatingMinBedrooms(): void
+    {
         $this->resetPage();
     }
 
-    public function updatingFeaturedOnly(): void{
+    public function updatingFeaturedOnly(): void
+    {
+        $this->resetPage();
+    }
+
+    // ← ADDED: Reset page when per page changes
+    public function updatingPerPage(): void
+    {
         $this->resetPage();
     }
 
     // Sorting
-    public function SortBy($field): void{
+    public function sortBy($field): void
+    {
         if ($this->sortBy === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
@@ -109,7 +124,8 @@ class PropertyListing extends Component
     }
 
     // Clear Filters
-    public function clearFilters(): void {
+    public function clearFilters(): void
+    {
         $this->reset([
             'search', 'minPrice', 'maxPrice', 'type', 
             'listingType', 'city', 'minBedrooms', 'featuredOnly'
@@ -118,7 +134,8 @@ class PropertyListing extends Component
     }
 
     // Change view mode
-    public function setViewMode($mode): void{
+    public function setViewMode($mode): void
+    {
         $this->viewMode = $mode;
     }
 
@@ -129,7 +146,7 @@ class PropertyListing extends Component
         return Property::query()
             ->when($this->search, function(Builder $query) {
                 $query->where(function($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%') // ← FIXED: string concatenation
+                    $q->where('title', 'like', '%' . $this->search . '%')
                       ->orWhere('description', 'like', '%' . $this->search . '%')
                       ->orWhere('address', 'like', '%' . $this->search . '%');
                 });
@@ -143,7 +160,7 @@ class PropertyListing extends Component
             ->when($this->featuredOnly, fn($q) => $q->where('is_featured', true))
             ->available()
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate(6);
+            ->paginate($this->perPage); // ← CHANGED: Use dynamic perPage
     }
 
     public function render()
