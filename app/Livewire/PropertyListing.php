@@ -145,6 +145,13 @@ class PropertyListing extends Component
     public function properties()
     {
         return Property::query()
+        ->select([
+            'id', 'title', 'slug', 'type', 'listing_type', 'status',
+            'price', 'price_per_sqft', 'address', 'city', 'state', 'country',
+            'bedrooms', 'bathrooms', 'total_area', 'images', 'is_featured',
+            'created_at'
+        ]) // Only select needed columns
+        
             ->when($this->search, function(Builder $query) {
                 $query->where(function($q) {
                     $q->where('title', 'like', '%' . $this->search . '%')
