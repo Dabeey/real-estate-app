@@ -60,7 +60,8 @@ class PropertyListing extends Component
         'sortBy' => ['except' => 'created_at'],
         'sortDirection' => ['except' => 'desc'],
         'perPage' => ['except' => 12], // ← ADDED
-        'page' => ['except' => 1],
+        // REMOVED: 'page' - Livewire pagination handles this automatically
+
     ];
 
     // Reset page when filters change

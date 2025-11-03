@@ -1,5 +1,7 @@
-{{-- Background for light and dark theme --}}
-<div class="min-h-screen bg-gray-50 dark:bg-neutral-900">
+{{-- IMPORTANT: Livewire requires a single root element wrapping everything --}}
+<div>
+    {{-- Background for light and dark theme --}}
+    <div class="min-h-screen bg-gray-50 dark:bg-neutral-900">
     
     {{-- Header Section --}}
     <div class="bg-white dark:bg-gray-800 shadow-sm">

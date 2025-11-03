@@ -154,7 +154,7 @@ class PropertyForm
                 // 5. Media & SEO - FIXED FILE UPLOAD
                 Section::make('Media & SEO')
                     ->columnSpanFull()
-                    ->description('Upload images and set SEO details.')
+            ->description('Upload images and set SEO details.')
                     ->schema([
                         FileUpload::make('images')
                             ->label('Property Images')
