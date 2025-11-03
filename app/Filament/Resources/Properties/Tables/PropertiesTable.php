@@ -94,26 +94,19 @@ class PropertiesTable
                     ->colors(['primary'])
                     ->limit(50), // Show first 3 features
 
-                ImageColumn::make('images')
-                    ->getStateUsing(function ($record) {
-                        $images = $record->images ?? [];
-                        return !empty($images) ? $images[0] : null;
-                    })
+                    ImageColumn::make('images')
+                    ->label('Images')
                     ->circular()
                     ->imageSize(50)
-                    ->defaultImageUrl('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&h=50&q=80')
-                    ->extraImgAttributes(['class' => 'object-cover']),
-
-                // ImageColumn::make('images')
-                //     ->getStateUsing(function ($record) {
-                //         return $record->images ?? [];
-                //     })
-                //     ->stacked()
-                //     ->limit(3)
-                //     ->circular()
-                //     ->size(30)
-                //     ->overlap(0.5),
-            
+                    ->stacked() // Stack images on top of each other
+                    ->limit(3) // Show max 3 images
+                    ->limitedRemainingText(true) // Shows "+X more"
+                    ->ring(2) // Add white ring around stacked images
+                    ->getStateUsing(function ($record) {
+                        // Return array of all image URLs (up to 3)
+                        $urls = $record->image_urls;
+                        return !empty($urls) ? $urls : ['https://via.placeholder.com/40x40.png?text=No+Image'];
+                    }),
 
                 // Hidden by default
                 TextColumn::make('slug')
