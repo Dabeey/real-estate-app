@@ -182,8 +182,9 @@
                                         src="{{ $property->main_image }}" 
                                         alt="{{ $property->title }}" 
                                         class="w-full h-48 object-cover"
-                                        onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22600%22%3E%3Crect width=%22800%22 height=%22600%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22monospace%22 font-size=%2236%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';"
-                                        loading="lazy">
+                                        loading="lazy"
+                                        decoding="async"
+                                        onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22600%22%3E%3Crect width=%22800%22 height=%22600%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22monospace%22 font-size=%2236%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';">
                                 @else
                                     <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                                         <span class="text-4xl">🏠</span>
@@ -321,3 +322,4 @@
         @endif
     </div>
 </div>
+{{-- End of root wrapper --}}

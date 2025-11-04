@@ -9,6 +9,10 @@
     <title>{{ $title ?? 'Page Title' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Preload critical resources --}}
+    <link rel="dns-prefetch" href="//real-estate-app.test">
+    <link rel="preconnect" href="//real-estate-app.test">
+
     {{-- Add alpine.js CDN for dropdown--}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
