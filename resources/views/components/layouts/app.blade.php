@@ -10,8 +10,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Preload critical resources --}}
-    <link rel="dns-prefetch" href="//real-estate-app.test">
-    <link rel="preconnect" href="//real-estate-app.test">
+    <link rel="dns-prefetch" href="//doorway.test">
+    <link rel="preconnect" href="//doorway.test">
 
     {{-- Add alpine.js CDN for dropdown--}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -29,7 +29,7 @@
                     <div class="flex items-center">
                         <a href="{{ route('properties.index') }}" class="flex items-center space-x-2">
                             <span class="text-2xl">🏠</span>
-                            <span class="text-xl font-bold text-gray-900 dark:text-gray-200">Real Estate App</span>
+                            <span class="text-xl font-bold text-gray-900 dark:text-gray-200">Doorway</span>
                         </a>
                     </div>
 
@@ -203,7 +203,7 @@
                     <div class="col-span-1 md:col-span-2">
                         <div class="flex items-center space-x-2 mb-4">
                             <span class="text-2xl">🏠</span>
-                            <span class="text-xl font-bold">Real Estate App</span>
+                            <span class="text-xl font-bold">Doorway</span>
                         </div>
                         <p class="text-gray-300 mb-4">
                             Your trusted partner in finding the perfect property in Nigeria.
@@ -236,7 +236,7 @@
                         <ul class="space-y-2 text-gray-300">
                             <li>📍 ESUT Agbani, Enugu, Nigeria.</li>
                             <li>📞 +234 907 7886 670</li>
-                            <li>✉️ info@realestate.ng</li>
+                            <li>✉️ info@doorway.ng</li>
                             <li>🕐 Mon - Sun: 6AM - 9PM</li>
                         </ul>
                     </div>
@@ -248,7 +248,7 @@
                         <p class="text-gray-400 text-sm">
                         
                         {{-- © {{ date('Y') }}: Automatically updates year --}}
-                            © {{ date('Y') }} Real Estate App. All rights reserved.
+                            © {{ date('Y') }} Doorway. All rights reserved.
                         </p>
                         <div class="flex space-x-6 mt-4 md:mt-0">
                             <a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a>
