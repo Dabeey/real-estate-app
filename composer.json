@@ -89,8 +89,8 @@
         },
         "platform": {
             "php": "8.2",
-            "ext-intl": "*",
-            "ext-zip": "*"
+            "ext-intl": "8.2",
+            "ext-zip": "8.2"
         }
     },
     "minimum-stability": "stable",
